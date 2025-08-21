@@ -1,10 +1,14 @@
 # Plano de Projeto: Log-Watcher AI SaaS
 
+---
+**[Visão Detalhada: Hub de Diagnóstico Centralizado](VISION_DIAGNOSTICS.md)**
+---
+
 ## 1. Visão Geral
 
-O Log-Watcher AI é um serviço (SaaS) projetado para desenvolvedores, freelancers e pequenas equipes de DevOps. A plataforma ingere logs de aplicações, utiliza modelos de IA para analisá-los de forma inteligente, e transforma o ruído de logs brutos em insights acionáveis, ajudando a identificar problemas mais rápido e a entender a saúde da aplicação.
+O Log-Watcher AI é um serviço (SaaS) projetado para ser o **hub central de observabilidade e diagnóstico** do ecossistema Primoia. Ele ingere logs de todas as aplicações, utiliza modelos de IA para analisá-los de forma inteligente, e transforma o ruído de logs brutos em insights acionáveis, ajudando a identificar problemas mais rápido e a entender a saúde da aplicação de forma proativa.
 
-## 2. Proposta de Valor
+## 2. Proposta de Valor e Funções de Diagnóstico
 
 - **Redução de Ruído:** Agrupa milhares de linhas de log repetitivas em um único evento acionável.
 - **Detecção Inteligente de Anomalias:** Usa IA para identificar padrões incomuns que podem indicar um problema, mesmo antes que ele gere um erro crítico.
