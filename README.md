@@ -1,115 +1,163 @@
-# Plano de Projeto: Log-Watcher AI SaaS
+# 🏗️ Primoia Log-Watcher - Hub de Diagnóstico Centralizado
 
----
-**[Visão Detalhada: Hub de Diagnóstico Centralizado](VISION_DIAGNOSTICS.md)**
----
+> **Hub central de observabilidade e diagnóstico para o ecossistema Primoia**
 
-## 1. Visão Geral
+O **Primoia Log-Watcher** é o sistema centralizado que coleta, processa e analisa logs de todos os serviços do ecossistema Primoia, fornecendo insights inteligentes e diagnóstico proativo através de IA.
 
-O Log-Watcher AI é um serviço (SaaS) projetado para ser o **hub central de observabilidade e diagnóstico** do ecossistema Primoia. Ele ingere logs de todas as aplicações, utiliza modelos de IA para analisá-los de forma inteligente, e transforma o ruído de logs brutos em insights acionáveis, ajudando a identificar problemas mais rápido e a entender a saúde da aplicação de forma proativa.
+## 🎯 O que é?
 
-## 2. Proposta de Valor e Funções de Diagnóstico
+O Primoia Log-Watcher é o **cérebro operacional** do ecossistema Primoia. Ele:
 
-- **Redução de Ruído:** Agrupa milhares de linhas de log repetitivas em um único evento acionável.
-- **Detecção Inteligente de Anomalias:** Usa IA para identificar padrões incomuns que podem indicar um problema, mesmo antes que ele gere um erro crítico.
-- **Economia de Tempo:** Desenvolvedores gastam menos tempo procurando "agulhas no palheiro" e mais tempo codificando.
-- **Acessibilidade:** Oferece uma alternativa mais simples e barata às complexas e caras plataformas de observabilidade do mercado (Datadog, New Relic).
+- ✅ **Centraliza todos os logs** de todos os serviços em um só lugar
+- ✅ **Reduz ruído** agrupando logs similares automaticamente
+- ✅ **Detecta anomalias** usando IA antes que afetem usuários
+- ✅ **Sugere diagnósticos** propondo causas-raiz para problemas
+- ✅ **Monitora proativamente** a saúde de todo o ecossistema
 
-## 3. Modelo de Negócio (Freemium com Assinatura)
+## 🚀 Integração Rápida
 
-O objetivo é construir uma base de usuários com um tier gratuito e converter uma porcentagem para um plano pago e sustentável.
+### Para Desenvolvedores de Serviços
 
-- **Tier Gratuito (Free):**
-  - Até 500 MB de ingestão de logs / mês.
-  - Retenção de dados de 7 dias.
-  - Análise de anomalias básica.
-  - Ideal para projetos pessoais e freelancers.
+Se você está desenvolvendo um serviço no ecossistema Primoia, veja o **[Guia de Integração](INTEGRATION_GUIDE.md)** para começar em 5 minutos.
 
-- **Tier Profissional (Pro):**
-  - **Preço Alvo:** $15 / mês.
-  - Até 10 GB de ingestão de logs / mês.
-  - Retenção de dados de 30 dias.
-  - Análises avançadas e sugestão de causa-raiz.
-  - Alertas via Email/Webhook.
+### Para Administradores
 
-## 4. Arquitetura do MVP (Produto Mínimo Viável)
+Se você está configurando o sistema, veja o **[Guia Docker](DOCKER_README.md)** para deploy.
 
-A arquitetura é desenhada para ser assíncrona, resiliente e de baixo custo inicial, utilizando o Proxmox como base.
+## 📊 Status Atual
 
-```
-                                     +-------------------------+
-+----------+   Logs (HTTPS)   +------>|  API de Ingestão (API)  |
-| Cliente  |------------------+       | (Kotlin/Python)         |
-+----------+                         +-----------+-------------+
-                                                 |
-                                     +-----------v-------------+
-                                     |  Fila de Mensagens      |
-                                     |  (RabbitMQ / NATS)      |
-                                     +-----------+-------------+
-                                                 |
-+--------------------------------+   +-----------v-------------+   +----------------------+
-|  Banco de Dados Relacional     |<--+  Workers de Análise (IA)  +-->|  Ollama (LLM)        |
-|  (PostgreSQL)                  |   |  (Python)               |   |  (Modelos de IA)     |
-|  - Usuários, Chaves API        |   +-------------------------+   +----------------------+
-|  - Resultados da Análise       |
-+--------------------------------+
+- ✅ **MVP Funcional** - API de ingestão operacional
+- ✅ **Docker Validado** - Containerização completa
+- ✅ **Autenticação** - Sistema de API keys funcionando
+- ✅ **Métricas** - Coleta e visualização de estatísticas
+- ✅ **Documentação** - Guias completos de integração
 
-+--------------------------------+
-|  Frontend Simples (Web)        |
-|  - Dashboard de resultados     |
-|  - Gestão de Chave API         |
-|  (Conecta-se ao PostgreSQL     |
-|   ou a uma API de leitura)     |
-+--------------------------------+
+## 🔧 Como Usar
+
+### Opção 1: Docker (Recomendado)
+
+```bash
+# Executar com Docker Compose
+docker compose up -d
+
+# Ou container simples
+docker build -t primoia-log-watcher .
+docker run -d --name primoia-log-watcher -p 8000:8000 primoia-log-watcher
 ```
 
-- **API de Ingestão:** Um endpoint leve escrito em Kotlin (usando Ktor/Spring) ou Python (usando FastAPI) que recebe os logs, valida a chave de API e publica o trabalho em uma fila.
-- **Fila de Mensagens:** RabbitMQ ou NATS rodando em um container. Desacopla a ingestão do processamento, garantindo que não se percam dados se a análise estiver lenta.
-- **Workers de Análise:** Processos em Python que consomem da fila. Eles fazem o trabalho pesado:
-  1. Chamam os modelos de IA no **Ollama** para resumir, agrupar ou encontrar anomalias.
-  2. Estruturam o resultado.
-  3. Salvam os insights no banco de dados **PostgreSQL**.
-- **Banco de Dados:** PostgreSQL para armazenar dados de usuários, chaves de API e os resultados processados das análises.
-- **Frontend:** Uma aplicação web mínima (pode ser feita com um framework simples como Streamlit em Python, ou um HTML/JS básico) para o usuário se cadastrar, pegar sua chave de API e ver os relatórios gerados.
+### Opção 2: Local
 
-## 5. Estratégia de Marketing: "Construa em Público"
+```bash
+pip install -r requirements.txt
+python run_server.py
+```
 
-O marketing será o próprio desenvolvimento do projeto.
+### Validação
 
-- **Blog Técnico / Canal do YouTube:** Documentar cada decisão de arquitetura, cada desafio técnico e cada sucesso.
-- **Conteúdo Alvo:** "Como escolhi entre RabbitMQ e NATS para meu SaaS", "Testando modelos do Ollama para análise de logs", "Minha jornada para os primeiros 10 clientes pagantes".
-- **Comunidade:** Engajar em comunidades de desenvolvedores (Reddit, Dev.to, fóruns) compartilhando os aprendizados, não fazendo propaganda direta. O produto será uma consequência natural do conteúdo de valor.
+```bash
+# Testar se está funcionando
+curl http://localhost:8000/health
 
-## 6. Roadmap Fásico
+# Executar validação completa
+./validate-docker.sh
+```
 
-- **Fase 1 (MVP - 3 a 6 meses):**
-  - [ ] Configurar a infraestrutura base no Proxmox (Docker, Gitea, etc.).
-  - [ ] Desenvolver a API de ingestão.
-  - [ ] Criar o primeiro worker de análise com uma lógica simples (ex: agrupar por similaridade).
-  - [ ] Lançar o frontend mínimo com autenticação e visualização de API Key.
-  - [ ] Começar o blog e documentar os primeiros passos.
+## 📚 Documentação
 
-- **Fase 2 (Beta Aberto - 2 meses):**
-  - [ ] Lançar o Tier Gratuito para os seguidores do blog e comunidades.
-  - [ ] Coletar feedback intensamente. O que funciona? O que falta?
-  - [ ] Refinar os modelos de IA e a lógica de análise com base no feedback.
+| Documento | Descrição |
+|-----------|-----------|
+| **[Guia de Integração](INTEGRATION_GUIDE.md)** | Como integrar seu serviço |
+| **[Guia Docker](DOCKER_README.md)** | Deploy e configuração Docker |
+| **[Status da Implementação](IMPLEMENTATION_STATUS.md)** | Progresso do desenvolvimento |
+| **[Visão Detalhada](VISION_DIAGNOSTICS.md)** | Visão estratégica do projeto |
 
-- **Fase 3 (Lançamento Comercial - Contínuo):**
-  - [ ] Implementar um sistema de pagamento (Stripe/Lemon Squeezy).
-  - [ ] Lançar o Tier Profissional.
-  - [ ] Continuar o ciclo de criar conteúdo e melhorar o produto.
+## 🔑 API Keys para Teste
 
-- **Fase 4 (Futuro):**
-  - [ ] Integração de alertas (Slack, Telegram, Discord).
-  - [ ] Dashboards de visualização mais avançados no frontend.
-  - [ ] Análise de logs em tempo real (streaming).
+| Serviço | API Key | Rate Limit |
+|---------|---------|------------|
+| nex-web-backend | `nex-web-backend-key-2024` | 1000 logs/min |
+| nex-mobile-backend | `nex-mobile-backend-key-2024` | 500 logs/min |
+| auth-service | `auth-service-key-2024` | 200 logs/min |
+| conductor | `conductor-key-2024` | 300 logs/min |
 
-## 7. Stack Tecnológica Sugerida
+## 🌐 Endpoints Principais
 
-- **Infraestrutura:** Proxmox, Docker
-- **Backend (API):** Kotlin (Ktor) ou Python (FastAPI)
-- **Backend (Workers):** Python
-- **Fila de Mensagens:** RabbitMQ
-- **Banco de Dados:** PostgreSQL
-- **IA (Local):** Ollama
-- **Controle de Versão:** Gitea (self-hosted)
+- **Health Check**: `GET /health`
+- **Documentação**: `GET /docs` (Swagger)
+- **Ingestão Individual**: `POST /api/v1/ingestion/logs/single`
+- **Ingestão em Lote**: `POST /api/v1/ingestion/logs/batch`
+- **Estatísticas**: `GET /api/v1/stats/global`
+
+## 📈 Exemplo de Uso
+
+```bash
+# Enviar um log de teste
+curl -X POST "http://localhost:8000/api/v1/ingestion/logs/single" \
+  -H "Authorization: Bearer nex-web-backend-key-2024" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "service_name": "nex-web-backend",
+    "service_type": "nex-web-backend",
+    "service_version": "1.0.0",
+    "service_instance_id": "web-backend-001",
+    "level": "INFO",
+    "message": "Teste de integração",
+    "environment": "dev"
+  }'
+```
+
+## 🏗️ Arquitetura
+
+```
+┌─────────────────┐    Logs    ┌─────────────────────┐
+│  Serviços       │ ──────────► │  API de Ingestão    │
+│  Primoia        │            │  (FastAPI)          │
+└─────────────────┘            └─────────┬───────────┘
+                                         │
+                                ┌────────▼─────────┐
+                                │  Fila de         │
+                                │  Processamento   │
+                                └────────┬─────────┘
+                                         │
+                                ┌────────▼─────────┐
+                                │  Análise IA      │
+                                │  (Futuro)        │
+                                └────────┬─────────┘
+                                         │
+                                ┌────────▼─────────┐
+                                │  Dashboard       │
+                                │  & Métricas      │
+                                └──────────────────┘
+```
+
+## 🎯 Próximos Passos
+
+### Para Desenvolvedores
+1. **Integrar seu serviço** - Veja o [Guia de Integração](INTEGRATION_GUIDE.md)
+2. **Implementar logs estruturados** - Use o formato padronizado
+3. **Monitorar métricas** - Acompanhe a saúde do seu serviço
+
+### Para o Projeto
+1. **Implementar IA** - Análise inteligente de logs
+2. **Adicionar persistência** - Banco de dados PostgreSQL
+3. **Criar dashboard** - Interface web para visualização
+4. **Alertas** - Notificações proativas
+
+## 🤝 Contribuindo
+
+1. **Teste a integração** do seu serviço
+2. **Reporte problemas** abrindo issues
+3. **Sugira melhorias** para o formato de logs
+4. **Compartilhe casos de uso** específicos
+
+## 📞 Suporte
+
+- **Documentação da API**: http://localhost:8000/docs
+- **Health Check**: http://localhost:8000/health
+- **Issues**: Abra uma issue no repositório
+
+---
+
+**Status**: ✅ **MVP Funcional** - Pronto para integração com serviços reais do ecossistema Primoia!
+
+> 💡 **Dica**: Comece pelo [Guia de Integração](INTEGRATION_GUIDE.md) se você quer integrar seu serviço rapidamente.

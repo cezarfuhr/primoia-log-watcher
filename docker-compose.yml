@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  primoia-log-watcher:
+    build: .
+    container_name: primoia-log-watcher
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - LOG_LEVEL=info
+    volumes:
+      # Volume para desenvolvimento (opcional)
+      - ./src:/app/src:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - primoia-network
+
+  # Serviço de exemplo para testar a integração
+  test-client:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: primoia-log-watcher-test
+    depends_on:
+      - primoia-log-watcher
+    environment:
+      - LOG_WATCHER_URL=http://primoia-log-watcher:8000
+      - API_KEY=nex-web-backend-key-2024
+    networks:
+      - primoia-network
+    profiles:
+      - test
+
+networks:
+  primoia-network:
+    driver: bridge

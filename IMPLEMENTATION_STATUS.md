@@ -85,23 +85,30 @@
 
 ## 🎯 Como Usar Agora
 
-### 1. Instalar Dependências
+### Opção 1: Docker (Recomendado)
+```bash
+cd primoia-main/primoia-monorepo/projects/primoia-log-watcher
+
+# Executar com Docker Compose
+docker compose up -d
+
+# Ou executar container simples
+docker build -t primoia-log-watcher .
+docker run -d --name primoia-log-watcher -p 8000:8000 primoia-log-watcher
+
+# Validar instalação
+./validate-docker.sh
+```
+
+### Opção 2: Local
 ```bash
 cd primoia-main/primoia-monorepo/projects/primoia-log-watcher
 pip install -r requirements.txt
-```
-
-### 2. Executar o Servidor
-```bash
 python run_server.py
-```
-
-### 3. Testar com Exemplos
-```bash
 python examples/send_logs_example.py
 ```
 
-### 4. Acessar Documentação
+### 3. Acessar Documentação
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
 - Health Check: http://localhost:8000/health
@@ -162,6 +169,7 @@ curl -X POST "http://localhost:8000/api/v1/admin/services" \
 ✅ **Métricas** - Coleta e visualização funcionando
 ✅ **Documentação** - Swagger/ReDoc automático
 ✅ **Exemplos** - Scripts de demonstração prontos
+✅ **Docker** - Containerização completa e validada
 
 ## 🚀 Próximas Ações Recomendadas
 

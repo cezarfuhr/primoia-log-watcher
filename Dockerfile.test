@@ -1,0 +1,20 @@
+# Dockerfile para testes do Primoia Log-Watcher
+FROM python:3.11-slim
+
+# Definir variáveis de ambiente
+ENV PYTHONUNBUFFERED=1
+
+# Definir diretório de trabalho
+WORKDIR /app
+
+# Instalar dependências para testes
+RUN pip install --no-cache-dir httpx requests
+
+# Copiar script de exemplo
+COPY examples/send_logs_example.py .
+
+# Script de entrada que aguarda o serviço principal e executa os testes
+COPY docker-test-entrypoint.sh .
+RUN chmod +x docker-test-entrypoint.sh
+
+ENTRYPOINT ["./docker-test-entrypoint.sh"]
